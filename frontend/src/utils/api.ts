@@ -118,13 +118,14 @@ export function redirectToLogin() {
 
 /**
  * Wrapper de fetch que injeta o JWT e trata expiração de sessão.
- * Aceita caminho relativo ("/users") ou URL absoluta.
+ * Aceita caminho relativo ("/users"), já com a base da API ("/api/users") ou URL absoluta.
  */
 export async function apiFetch(
   input: string,
   init: RequestInit = {}
 ): Promise<Response> {
-  const url = /^https?:\/\//i.test(input) ? input : `${API_URL}${input}`;
+  const jaTemBase = /^https?:\/\//i.test(input) || (Boolean(API_URL) && input.startsWith(`${API_URL}/`));
+  const url = jaTemBase ? input : `${API_URL}${input}`;
 
   const headers = new Headers(init.headers || {});
   const token = getAccessToken();
