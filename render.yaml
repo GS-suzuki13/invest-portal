@@ -1,0 +1,15 @@
+# Blueprint do Render: um único serviço web que serve o site e a API (/api).
+# Banco SQLite descartável, recriado com dados fictícios a cada deploy/boot.
+services:
+  - type: web
+    name: invest-portal-demo
+    runtime: node
+    plan: free
+    buildCommand: cd frontend && npm ci && npm run build && cd ../backend && npm ci
+    startCommand: cd backend && npm run demo
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.19.0
+      - key: JWT_SECRET
+        generateValue: true

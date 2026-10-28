@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR" translate="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="google" content="notranslate" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <!-- barra de status/navegador na cor do topo do site (tema só escuro) -->
+    <meta name="theme-color" content="#070b12" />
+    <title>InvestPortal - Gestão de Ativos</title>
+    <meta name="description" content="InvestPortal - Demonstração de plataforma de gestão de investimentos" />
+    <!-- fonte Inter (mesma de antes): no head ela baixa junto com a página, em vez de esperar o CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap" />
+    <script>
+      // Quebra-loop de última instância: roda antes do app. Se a MESMA rota
+      // recarregar 6+ vezes seguidas com menos de 1 s entre elas, limpa a
+      // sessão e volta ao login. Protege quem ficou preso no loop mesmo com
+      // bundle antigo. Loop de verdade recarrega em milissegundos e sem parar;
+      // a janela curta evita deslogar quem só apertou F5 algumas vezes.
+      (function () {
+        try {
+          var path = location.pathname;
+          var now = Date.now();
+          var KEY = 'ip:navguard';
+          var st = JSON.parse(sessionStorage.getItem(KEY) || 'null') || {};
+          st.n = st.path === path && now - (st.t || 0) < 1000 ? (st.n || 0) + 1 : 1;
+          st.path = path;
+          st.t = now;
+          sessionStorage.setItem(KEY, JSON.stringify(st));
+          if (st.n >= 6) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('loggedUser');
+            sessionStorage.removeItem(KEY);
+            if (path !== '/login') location.replace('/login');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
