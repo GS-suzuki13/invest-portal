@@ -11,6 +11,12 @@ import type { LoggedUser } from '../types';
 const homeFor = (role: LoggedUser['role']) =>
   role === 'admin' ? '/admin/dashboard' : '/dashboard-cliente';
 
+// contas fictícias da demonstração (src/demoData.js no backend)
+const CONTAS_DEMO = [
+  { label: 'Administrador', user: 'admin', senha: 'admin123' },
+  { label: 'Investidor', user: 'investidor.demo', senha: 'demo123' },
+];
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const hasRedirected = useRef(false);
@@ -182,8 +188,30 @@ const Login: React.FC = () => {
             </button>
           </form>
 
+          <div className="mt-5 rounded-2xl border border-ip-border-soft bg-ip-surface/60 p-4">
+            <p className="ip-eyebrow text-center">Acesso de demonstração</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {CONTAS_DEMO.map((c) => (
+                <button
+                  key={c.user}
+                  type="button"
+                  onClick={() => {
+                    setError('');
+                    setFormData({ username: c.user, password: c.senha });
+                  }}
+                  className="ip-btn ip-btn-ghost flex-col gap-0.5 px-2 py-2.5"
+                >
+                  <span>{c.label}</span>
+                  <span className="text-xs font-normal text-ip-text-mute">
+                    {c.user} · {c.senha}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <p className="mt-6 text-center text-xs text-ip-text-mute">
-            InvestPortal · Acesso restrito
+            InvestPortal · Dados fictícios de demonstração
           </p>
         </motion.div>
       </main>

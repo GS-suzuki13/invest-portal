@@ -20,31 +20,8 @@ const app = require("../src/app");
 const sequelize = require("../src/database");
 const ensureSchema = require("../src/ensureSchema");
 const User = require("../models/User");
+const { USUARIOS_BASE } = require("../src/demoData");
 
-const SEEDS = [
-  {
-    user: "admin",
-    password: "admin123",
-    token: "adm",
-    name: "Admin Local",
-    cpf: "00000000191",
-    email: "admin@local.test",
-    data_cadastro: "2025-01-01",
-    valor_aportado: 0,
-    percentual_contrato: 3,
-  },
-  {
-    user: "cliente.teste",
-    password: "123456",
-    token: "user",
-    name: "Cliente Teste",
-    cpf: "11144477735",
-    email: "cliente@local.test",
-    data_cadastro: "2025-02-01",
-    valor_aportado: 10000,
-    percentual_contrato: 3,
-  },
-];
 
 async function main() {
   await sequelize.authenticate();
@@ -52,7 +29,7 @@ async function main() {
   await ensureSchema();
   console.log("✅ SQLite pronto:", process.env.DB_STORAGE);
 
-  for (const s of SEEDS) {
+  for (const s of USUARIOS_BASE) {
     const [u, criado] = await User.findOrCreate({
       where: { user: s.user },
       defaults: s,

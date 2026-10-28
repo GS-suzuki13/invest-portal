@@ -31,6 +31,8 @@ if (dialect === "sqlite") {
 
   sequelize = new Sequelize({
     dialect: "sqlite",
+    // require explícito: o bundler da Vercel não enxerga o require dinâmico do Sequelize
+    dialectModule: require("sqlite3"),
     storage,
     logging: false,
     define: commonDefine,

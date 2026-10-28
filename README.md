@@ -75,7 +75,8 @@ Os gráficos são SVG próprios, sem biblioteca de gráficos.
 │       ├── components/
 │       ├── hooks/
 │       └── utils/
-└── render.yaml            # blueprint de deploy da demonstração
+├── api/index.js           # função serverless da Vercel (API + dados da demo)
+└── vercel.json
 ```
 
 ---
@@ -115,15 +116,21 @@ npm test   # suíte de integração da API (SQLite temporário)
 
 ---
 
-## Deploy (Render)
+## Deploy (Vercel)
 
-O arquivo `render.yaml` cria um serviço web gratuito. O build gera o frontend
-e instala o backend. O start roda `npm run demo`. No Render, crie um
-**New → Blueprint** apontando para este repositório.
+O `vercel.json` publica o frontend como site estático. A API roda como função
+serverless em `api/index.js`, que reaproveita o app Express em `/api/*`.
 
-No plano gratuito, o serviço hiberna após um período sem acesso. O primeiro
-acesso depois disso leva cerca de 1 minuto. Os dados voltam ao estado inicial
-a cada reinício.
+- Cada instância da função cria o próprio SQLite em `/tmp`, já com os dados da demonstração.
+- Os IDs dos usuários são fixos, então o login vale em qualquer instância.
+- Alterações feitas na demo somem quando a instância é reciclada.
+
+```bash
+npx vercel deploy --prod
+```
+
+Para um ambiente real, aponte `DB_*` para um MySQL e defina `JWT_SECRET` nas
+variáveis do projeto. Nesse caso, use `server.js` como entrada.
 
 ---
 
