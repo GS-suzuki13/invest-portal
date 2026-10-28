@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "__DB_USER__",
+    "password": "__DB_PASSWORD__",
+    "database": "__DB_NAME__",
+    "host": "__DB_HOST__",
+    "port": 3306,
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "__DB_USER__",
+    "password": "__DB_PASSWORD__",
+    "database": "__DB_NAME__",
+    "host": "__DB_HOST__",
+    "port": 3306,
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "__DB_USER__",
+    "password": "__DB_PASSWORD__",
+    "database": "__DB_NAME__",
+    "host": "__DB_HOST__",
+    "port": 3306,
+    "dialect": "mysql"
+  }
+}

@@ -1,0 +1,246 @@
+/* fonte Inter: carregada no <head> do index.html (preconnect + link), sem @import em cadeia */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* sem o flash cinza no toque: a pressão (usePressao) já dá o feedback */
+    -webkit-tap-highlight-color: transparent;
+    /* app com rolagens internas: sem puxar-para-atualizar nem elástico da página */
+    overscroll-behavior: none;
+  }
+  body {
+    overscroll-behavior: none;
+  }
+
+  /* controles: sem atraso de toque e sem selecionar o rótulo ao segurar */
+  button,
+  a,
+  [role='button'] {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /* iPhone dá zoom em campo com fonte < 16px (e não volta): 16px no toque */
+  @media (pointer: coarse) {
+    input,
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
+  }
+
+  body {
+    @apply bg-ip-bg text-ip-text font-sans antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    /* tracking vem de cada tamanho (tailwind.config.js), nunca um valor só */
+    font-optical-sizing: auto;
+  }
+
+  /* números financeiros com largura fixa (alinhamento em tabelas) */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background: rgba(240, 192, 64, 0.28);
+    color: #fff;
+  }
+
+  /* scrollbar discreta no tema escuro */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #26344a transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #26344a;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: #33455f;
+    background-clip: content-box;
+  }
+}
+
+@layer components {
+  /* ── Superfícies ─────────────────────────────────────────── */
+  .ip-card {
+    @apply rounded-2xl border border-ip-border bg-ip-surface shadow-card;
+  }
+  .ip-card-i {
+    @apply rounded-xl border border-ip-border-soft bg-ip-surface-2;
+  }
+  /* fundo escuro único de todos os modais/painéis (foco na tarefa) */
+  .ip-scrim {
+    @apply bg-black/60 backdrop-blur-sm;
+  }
+  /* aresta clara de 6%: luz pegando na borda do material */
+  .ip-aresta {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  }
+  /* material translúcido escuro (headers, popovers): o conteúdo rola por baixo */
+  .ip-material {
+    background: rgba(7, 11, 18, 0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+  /* borda de rolagem: degradê curto só quando há conteúdo coberto (data-rolou) */
+  .ip-borda-rolagem::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    height: 1rem;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(7, 11, 18, 0.8), rgba(7, 11, 18, 0));
+    opacity: 0;
+  }
+  .ip-borda-rolagem[data-rolou='true']::after {
+    opacity: 1;
+  }
+  /* página recuada pelo ☰ (em movimento): sem blur, que recalcula a cada quadro */
+  .ip-recuado .ip-material {
+    background: #070b12;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* rolagens dentro de painéis não arrastam a página de trás */
+  .ip-rolagem-contida * {
+    overscroll-behavior: contain;
+  }
+  .ip-card-hover {
+    @apply hover:border-ip-navy-400/60 hover:shadow-card-hover;
+  }
+
+  /* ── Botões ──────────────────────────────────────────────── */
+  .ip-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
+      text-sm font-semibold outline-none
+      focus-visible:ring-2 focus-visible:ring-ip-gold/60 disabled:opacity-50
+      disabled:pointer-events-none;
+  }
+  .ip-btn-primary {
+    @apply bg-ip-gold text-ip-navy hover:bg-ip-gold-600
+      shadow-[0_8px_24px_-10px_rgba(240,192,64,0.6)];
+  }
+  .ip-btn-ghost {
+    @apply border border-ip-border bg-ip-surface-2 text-ip-text
+      hover:border-ip-navy-400/60 hover:bg-ip-surface-3;
+  }
+  .ip-btn-danger {
+    @apply bg-ip-negative/15 text-ip-negative border border-ip-negative/25
+      hover:bg-ip-negative/25;
+  }
+
+  /* ── Formulários ─────────────────────────────────────────── */
+  .ip-label {
+    @apply block text-xs font-medium uppercase tracking-wider text-ip-text-mute mb-2;
+  }
+  .ip-input {
+    @apply w-full rounded-xl border border-ip-border bg-ip-surface-2 px-4 py-3
+      text-sm text-ip-text placeholder:text-ip-text-mute outline-none
+      focus:border-ip-gold/70 focus:ring-2 focus:ring-ip-gold/20;
+  }
+
+  /* ── Chips / badges ──────────────────────────────────────── */
+  .ip-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1
+      text-xs font-medium;
+  }
+
+  /* rótulo de seção */
+  .ip-eyebrow {
+    @apply text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-ip-gold/80;
+  }
+
+  /* selos e contadores: 11px em rem (acompanha a fonte do navegador), tracking levemente positivo */
+  .ip-selo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* número grande (patrimônio): entrelinha apertada e tracking negativo */
+  .ip-display {
+    /* 24px no celular estreito (cabe "R$ 12.345.678,90" em 320px) até 48px */
+    font-size: clamp(1.5rem, 6.5vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .ip-display-longo {
+    font-size: clamp(1.25rem, 5.2vw, 2.5rem);
+  }
+}
+
+@layer utilities {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      #131d2b 25%,
+      #1b283a 37%,
+      #131d2b 63%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-lg;
+  }
+
+  /* atrasos p/ entrada escalonada */
+  .delay-1 { animation-delay: 60ms; }
+  .delay-2 { animation-delay: 120ms; }
+  .delay-3 { animation-delay: 180ms; }
+  .delay-4 { animation-delay: 240ms; }
+  .delay-5 { animation-delay: 300ms; }
+  .delay-6 { animation-delay: 360ms; }
+}
+
+/* ── Acessibilidade: preferências do sistema ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  /* nada se move sozinho; o que não é tocável vira fade curto */
+  .animate-marquee,
+  .skeleton {
+    animation: none;
+  }
+  .animate-fade-up {
+    animation: fade-in 200ms ease both;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .ip-material {
+    background: #070b12;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .ip-scrim {
+    background: rgba(0, 0, 0, 0.75);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .ip-material {
+    background: #070b12;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: 0 1px 0 #33455f;
+  }
+  .ip-aresta {
+    border-color: #33455f;
+  }
+}
