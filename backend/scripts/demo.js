@@ -1,6 +1,6 @@
 /**
- * Sobe a DEMONSTRAÇÃO pública: SQLite descartável, dados fictícios recriados a
- * cada boot e o frontend (build) servido pelo mesmo processo.
+ * Sobe a DEMONSTRAÇÃO num processo só: SQLite descartável, dados fictícios
+ * recriados a cada boot e o frontend (build) servido em "/" com a API em "/api".
  *
  *   cd frontend && npm run build
  *   cd ../backend && npm run demo
@@ -11,14 +11,9 @@
 
 const path = require("path");
 const fs = require("fs");
-const crypto = require("crypto");
-const { execFileSync } = require("child_process");
 
 process.env.DB_STORAGE =
   process.env.DB_STORAGE || path.join(__dirname, "..", "data", "demo.sqlite");
-// segredo novo a cada boot se não vier do ambiente: sessões antigas caem junto com os dados
-process.env.JWT_SECRET =
-  process.env.JWT_SECRET || crypto.randomBytes(32).toString("hex");
 process.env.FRONTEND_DIST =
   process.env.FRONTEND_DIST || path.join(__dirname, "..", "..", "frontend", "dist");
 
@@ -27,11 +22,13 @@ if (!fs.existsSync(path.join(process.env.FRONTEND_DIST, "index.html"))) {
   process.exit(1);
 }
 
-// banco zerado a cada boot: a demo sempre começa no mesmo estado
-fs.rmSync(process.env.DB_STORAGE, { force: true });
-execFileSync(process.execPath, [path.join(__dirname, "seedDemo.js")], {
-  stdio: "inherit",
-  env: process.env,
-});
+require("./_localEnv");
+const { popularDemo } = require("../src/demoData");
 
-require("./devLocal");
+// banco zerado a cada boot: a demo sempre começa no mesmo estado
+popularDemo({ zerar: true })
+  .then(() => require("./devLocal"))
+  .catch((err) => {
+    console.error("\n💥 erro ao preparar a demo:\n", err);
+    process.exit(1);
+  });

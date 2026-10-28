@@ -51,16 +51,16 @@ app.use(
   })
 );
 
-// Com o site no mesmo processo, a API fica sob /api: tira o prefixo antes das rotas
-if (FRONTEND_DIST) {
-  app.use((req, res, next) => {
-    if (req.url === "/api" || req.url.startsWith("/api/")) {
-      req.url = req.url.slice(4) || "/";
-      req.isApi = true;
-    }
-    next();
-  });
-}
+// O site chama a API em /api (mesmo domínio, aqui ou na Vercel): tira o
+// prefixo antes das rotas. Chamadas diretas sem o prefixo continuam valendo.
+app.use((req, res, next) => {
+  if (req.url === "/api" || req.url.startsWith("/api/") || req.url.startsWith("/api?")) {
+    req.url = req.url.slice(4) || "/";
+    if (req.url.startsWith("?")) req.url = "/" + req.url;
+    req.isApi = true;
+  }
+  next();
+});
 
 // CORS: restrito quando FRONTEND_URL está definido; senão mantém aberto (comportamento atual)
 const allowedOrigins = (process.env.FRONTEND_URL || "")

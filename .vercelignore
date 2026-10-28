@@ -1,0 +1,8 @@
+**/node_modules
+frontend/dist
+backend/data
+backend/uploads
+*.sqlite
+.env
+.env.*
+!.env.example
